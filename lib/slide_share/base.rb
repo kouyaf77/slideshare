@@ -3,7 +3,7 @@ require "digest/sha1"
 module SlideShare
   class Base
     include HTTParty
-    base_uri "http://www.slideshare.net/api/2"
+    base_uri "https://www.slideshare.net/api/2"
     format :xml
     
     attr_accessor :api_key, :shared_secret
