@@ -2,3 +2,5 @@
 doc
 github-test.rb
 *.gem
+*.swo
+*.swp

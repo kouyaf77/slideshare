@@ -70,7 +70,9 @@ module SlideShare
     def find_all_by_user(user, options = {})
       detailed = convert_to_number(options.delete(:detailed))
       options[:detailed] = detailed unless detailed.nil?
-      base.send :get, "/get_slideshows_by_user", options.merge(:username_for => user)
+      api_result = base.send :get, "/get_slideshows_by_user", options.merge(:username_for => user)
+      slides_info = api_result["User"]["Slideshow"] rescue []
+      return slides_info.map { |slide_info| self.find(slide_info["ID"]) }
     end
     
     # Returns true if successful or raises an appropriate exception if not.

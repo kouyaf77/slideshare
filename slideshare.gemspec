@@ -1,7 +1,8 @@
 Gem::Specification.new do |s|
   s.name = "slideshare"
-  s.version = "0.1.2.5"
-  
+  s.version = "0.1.2.6"
+  s.author = 'lostboy/forked by huydx'
+
   s.summary = "Ruby interface for SlideShare API"
   s.description = "Ruby interface for SlideShare API"
   s.files = %w{
