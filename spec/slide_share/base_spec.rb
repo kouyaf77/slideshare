@@ -51,7 +51,7 @@ describe SlideShare::Base do
     
     it "should abstract access to the SlideShare::Slideshows class through SlideShare#slideshows" do
       @slideshow = mock("SlideShare::Slideshows")
-      SlideShare::Slideshows.stub!(:new).and_return(@slideshow)
+      SlideShare::Slideshows.stub(:new).and_return(@slideshow)
       @slideshare.slideshows.should == @slideshow
     end
   end

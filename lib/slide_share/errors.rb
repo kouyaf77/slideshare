@@ -15,4 +15,7 @@ module SlideShare
   
   # Raised when the application has made more than 1000 calls a day
   class AccountExceededDailyLimit < ServiceError; end
+
+  # Raised when result of oembed return does not have image url
+  class SlideDoesNotContainImageUrl < ServiceError; end
 end

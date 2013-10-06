@@ -4,16 +4,16 @@ describe SlideShare::Slideshows do
   before(:all) do
     @slideshare = SlideShare::Base.new(spec_fixture("config.yml"))
     @now = Time.now
-    Time.stub!(:now).and_return(@now)
+    Time.stub(:now).and_return(@now)
   end
   
   describe "when creating a slideshow" do
     before(:each) do
       @upload = spec_fixture("sample.txt")
       @curl = mock("Curl::Easy instance")
-      Curl::Easy.stub!(:new).and_return(@curl)
-      @curl.stub!(:http_post)
-      @curl.stub!(:body_str).and_return(File.read(spec_fixture("upload_slideshow.xml")))
+      Curl::Easy.stub(:new).and_return(@curl)
+      @curl.stub(:http_post)
+      @curl.stub(:body_str).and_return(File.read(spec_fixture("upload_slideshow.xml")))
     end
     
     # it "should generate the proper API call" do
@@ -25,7 +25,7 @@ describe SlideShare::Slideshows do
     end
     
     it "should raise SlideShare::FailedUserAuthentication if given bad credentials" do
-      @curl.stub!(:body_str).and_return(File.read(spec_fixture("error_failed_auth.xml")))
+      @curl.stub(:body_str).and_return(File.read(spec_fixture("error_failed_auth.xml")))
       lambda {
         @slideshare.slideshows.create "A Title", @upload, "wronguser", "wrongpass"
       }.should raise_error(SlideShare::FailedUserAuthentication)

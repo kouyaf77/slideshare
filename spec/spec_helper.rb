@@ -19,7 +19,7 @@ end
 def stub_time_now
   # Returning ;)
   now = Time.now
-  Time.stub!(:now).and_return(now)
+  Time.stub(:now).and_return(now)
   now
 end
 
@@ -34,14 +34,14 @@ def stub_http_response_with(filename)
   http = Net::HTTP.new('localhost', 80)
   
   response = Net::HTTPOK.new("1.1", 200, "Content for you")
-  response.stub!(:body).and_return(data)
-  http.stub!(:request).and_return(response)
+  response.stub(:body).and_return(data)
+  http.stub(:request).and_return(response)
   
   http_request = HTTParty::Request.new(Net::HTTP::Get, '')
-  http_request.stub!(:get_response).and_return(response)
-  http_request.stub!(:format).and_return(format)
+  http_request.stub(:get_response).and_return(response)
+  http_request.stub(:format).and_return(format)
   
-  HTTParty::Request.stub!(:new).and_return(http_request)
+  HTTParty::Request.stub(:new).and_return(http_request)
   
   case format
   when :xml

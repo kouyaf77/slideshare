@@ -1,9 +1,12 @@
 require "digest/sha1"
+require 'pry'
 
 module SlideShare
   class Base
     include HTTParty
-    base_uri "https://www.slideshare.net/api/2"
+    @@base_uri    = "https://www.slideshare.net/api/2"
+    @@oembed_uri  = "http://www.slideshare.net/api/oembed/2"    
+
     format :xml
     
     attr_accessor :api_key, :shared_secret
@@ -43,9 +46,24 @@ module SlideShare
     
   private
     def get(*args)
+      self.class.base_uri @@base_uri
       puts (query = add_required_params(args.extract_options!)).inspect
       catch_errors self.class.get(args.first,
         {:query => query})
+    end
+    
+    #obemded api
+    #parameters: 
+    # url: url of slide to get oembeded info
+    # optional parameters: 
+    # - maxwidth (optional) : The maximum width of the embed in pixels.
+    # - maxheight (optional) : The maximum height of the embed in pixels.
+    # - format (optional) : xml, json, jsonp
+    # - callback (optional) : Returns jsonp response format. callback is name of the JavaScript 
+    def get_obembed(url, optional_args = {})
+      self.class.base_uri @@oembed_uri
+      args = optional_args.merge(:url => url)
+      catch_errors self.class.get('', query: args, 'charset'=>'utf-8')
     end
     
     def post(*args)

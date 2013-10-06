@@ -70,9 +70,17 @@ module SlideShare
     def find_all_by_user(user, options = {})
       detailed = convert_to_number(options.delete(:detailed))
       options[:detailed] = detailed unless detailed.nil?
+
       api_result = base.send :get, "/get_slideshows_by_user", options.merge(:username_for => user)
       slides_info = api_result["User"]["Slideshow"] rescue []
-      return slides_info.map { |slide_info| self.find(slide_info["ID"]) }
+      slides_images_array = 
+        slides_info.map { |slide_info| 
+          {
+            info: slide_info,
+            images: self.images_from_url(slide_info["URL"]),
+          }
+        } 
+      slides_images_array
     end
     
     # Returns true if successful or raises an appropriate exception if not.
@@ -106,7 +114,21 @@ module SlideShare
         :username => username, :password => password
       true # This might be too naïve but should have already raised exception if unsuccessful
     end
-    
+  
+    def images_from_url(slide_url)
+      oembed_result = base.send(:get_obembed, slide_url, format: 'xml')["oembed"]
+      slide_image_baseurl = oembed_result["slide_image_baseurl"][2..-1] #remove // from return base url
+      suffix = oembed_result["slide_image_baseurl_suffix"]
+      total_slides = oembed_result["total_slides"]
+
+      raise SlideDoesNotContainImageUrl unless suffix && slide_image_baseurl
+      image_array = []
+      (1..total_slides).each do |i|
+        image_array << slide_image_baseurl + i.to_s + suffix
+      end
+      return image_array
+    end
+  
   private
     def force_boolean_params_to_letters!(hash)
       [
