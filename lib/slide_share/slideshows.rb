@@ -58,7 +58,11 @@ module SlideShare
     def find(id, options = {})
       detailed = convert_to_number(options.delete(:detailed))
       options[:detailed] = detailed unless detailed.nil?
-      base.send :get, "/get_slideshow", options.merge(:slideshow_id => id)
+      ret = api_result = base.send :get, "/get_slideshow", options.merge(:slideshow_id => id)
+      if options[:full_image]
+        ret = {info: api_result, images: self.images_from_url(api_result["URL"]}
+      end
+      ret
     end
     
     # Returns hash representing the user requests and an array of their slideshows
@@ -71,16 +75,19 @@ module SlideShare
       detailed = convert_to_number(options.delete(:detailed))
       options[:detailed] = detailed unless detailed.nil?
 
-      api_result = base.send :get, "/get_slideshows_by_user", options.merge(:username_for => user)
-      slides_info = api_result["User"]["Slideshow"] rescue []
-      slides_images_array = 
-        slides_info.map { |slide_info| 
-          {
-            info: slide_info,
-            images: self.images_from_url(slide_info["URL"]),
-          }
-        } 
-      slides_images_array
+      ret = api_result = base.send :get, "/get_slideshows_by_user", options.merge(:username_for => user)
+      if options[:full_image] 
+        slides_info = api_result["User"]["Slideshow"] rescue []
+        slides_images_array = 
+          slides_info.map { |slide_info| 
+            {
+              info: slide_info,
+              images: self.images_from_url(slide_info["URL"]),
+            }
+          } 
+        ret = slides_images_array
+      end
+      ret
     end
     
     # Returns true if successful or raises an appropriate exception if not.
