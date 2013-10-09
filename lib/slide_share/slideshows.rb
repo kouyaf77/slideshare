@@ -60,7 +60,7 @@ module SlideShare
       options[:detailed] = detailed unless detailed.nil?
       ret = api_result = base.send :get, "/get_slideshow", options.merge(:slideshow_id => id)
       if options[:full_image]
-        ret = {info: api_result, images: self.images_from_url(api_result["URL"]}
+        ret = {info: api_result, images: self.images_from_url(api_result["URL"])}
       end
       ret
     end
