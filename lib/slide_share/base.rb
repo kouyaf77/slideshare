@@ -1,5 +1,4 @@
 require "digest/sha1"
-require 'pry'
 
 module SlideShare
   class Base
