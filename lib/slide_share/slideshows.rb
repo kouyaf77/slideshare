@@ -60,7 +60,7 @@ module SlideShare
       options[:detailed] = detailed unless detailed.nil?
       ret = api_result = base.send :get, "/get_slideshow", options.merge(:slideshow_id => id)
       if options[:full_image]
-        ret = {info: api_result, images: self.images_from_url(api_result["URL"])}
+        ret = {info: api_result, images: self.images_from_url(api_result["Slideshow"]["URL"])}
       end
       ret
     end
@@ -123,7 +123,12 @@ module SlideShare
     end
   
     def images_from_url(slide_url)
-      oembed_result = base.send(:get_obembed, slide_url, format: 'xml')["oembed"]
+      begin 
+        oembed_result = base.send(:get_obembed, slide_url, format: 'xml')["oembed"]
+      rescue Exception => e
+        raise SlideDoesNotContainImageUrl
+      end
+
       slide_image_baseurl = oembed_result["slide_image_baseurl"][2..-1] #remove // from return base url
       suffix = oembed_result["slide_image_baseurl_suffix"]
       total_slides = oembed_result["total_slides"]
